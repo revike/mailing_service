@@ -2,23 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from main.services import get_timezones
-from main.validators import validate_phone
-
-
-class Client(models.Model):
-    """Model client"""
-    TIMEZONES = get_timezones()
-    phone = models.CharField(max_length=16, validators=[validate_phone], unique=True, verbose_name='phone')
-    tag = models.CharField(max_length=64, verbose_name='tag')
-    location = models.CharField(max_length=128, choices=TIMEZONES, verbose_name='location')
-
-    class Meta:
-        verbose_name = 'client'
-        verbose_name_plural = 'clients'
-
-    def __str__(self):
-        return f'{self.phone}'
+from client.models import Client
 
 
 class Tag(models.Model):
