@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from main.filters import date_range_filter_builder
-from main.models import Mailing, Client, Message
+from main.models import Mailing, Message
 
 
 @admin.register(Mailing)
