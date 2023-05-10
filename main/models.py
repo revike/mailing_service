@@ -46,6 +46,7 @@ class Mailing(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, related_name='mailing_tags', verbose_name='tags')
     start = models.DateTimeField(verbose_name='start date time')
     stop = models.DateTimeField(verbose_name='stop date time')
+    is_active = models.BooleanField(default=True, verbose_name='is active')
 
     class Meta:
         verbose_name = 'mailing'
