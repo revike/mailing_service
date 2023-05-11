@@ -150,6 +150,9 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Date time format
+DATETIME_FORMAT = '%Y-%m-%d %H:%M'
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -191,6 +194,19 @@ CORS_ALLOW_HEADERS = (
     'Access-Control-Allow-Headers',
     'Access-Control-Allow-Credentials',
 )
+
+# Redis
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = os.getenv("REDIS_PORT")
+
+# Celery
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/1'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/1'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_EVENT_QUEUE_PREFIX = 'mailing_service'
 
 # Superuser
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')

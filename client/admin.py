@@ -9,4 +9,5 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ['id', 'phone', 'tag', 'location', 'is_active']
     list_display_links = list_display
     search_fields = list_display[1:]
-    list_filter = ['is_active', 'tag']
+    list_filter = ['is_active', 'mobile_code', 'tag']
+    fields = list_display[1:]
