@@ -105,12 +105,20 @@ OpenAPI спецификация находится по адресу: https://p
 python3 -m venv venv
 ```
 
+--------------------
+---
+Делаем файл docker_commands.sh исполняемым
+
+```
+chmod +x docker_commands.sh
+```
+
 Запуск с помощью docker-compose
 -------------------------------
 ---
 
 ~~~
-docker-compose up -d 
+docker-compose up --build -d 
 ~~~
 
 ---

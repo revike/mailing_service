@@ -10,3 +10,5 @@ static
 venv
 env
 .env
+
+celerybeat-schedule

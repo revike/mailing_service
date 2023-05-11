@@ -1,12 +1,25 @@
 from rest_framework import generics
 
+from client.models import Client
 from main.models import CodeMobile, Tag, Mailing
 from main.serializers import MailingSerializer, MobileCodeSerializer, TagSerializer
+from main.services import start_mailing
 
 
 class MailingCreateApiView(generics.CreateAPIView):
     """Create mailing"""
     serializer_class = MailingSerializer
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        mailing = serializer.data
+        start = mailing.get('start')
+        stop = mailing.get('stop')
+        mobile_codes = mailing.get('mobile_codes')
+        tags = mailing.get('tags')
+        clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
+        if clients:
+            start_mailing(clients, start, stop)
 
 
 class MailingUpdateApiView(generics.UpdateAPIView):
