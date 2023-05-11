@@ -212,3 +212,7 @@ CELERY_EVENT_QUEUE_PREFIX = 'mailing_service'
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
+# Mailing service
+MAILING_URL = os.getenv('MAILING_URL')
+MAILING_TOKEN = os.getenv('MAILING_TOKEN')
