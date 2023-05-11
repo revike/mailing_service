@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework import status
 
 from base.tests import BaseTestCase
+from config.settings import REST_FRAMEWORK
 from main.models import Mailing
 
 
@@ -24,7 +25,9 @@ class TestMailing(BaseTestCase):
     def test_create_mailing(self):
         """Test create mailing"""
         url = reverse('mailing:create')
-        data = {'message': 'msg', 'start': f'{timezone.now()}', 'stop': f'{timezone.now() + timedelta(days=1)}'}
+        start = timezone.now().strftime(REST_FRAMEWORK['DATETIME_FORMAT'])
+        stop = (timezone.now() + timedelta(days=1)).strftime(REST_FRAMEWORK['DATETIME_FORMAT'])
+        data = {'message': 'msg', 'start': f'{start}', 'stop': f'{stop}'}
         response = self._make_post(url, '', data, status.HTTP_201_CREATED)
         self.assertEqual(response['message'], data['message'])
 

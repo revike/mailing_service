@@ -1,3 +1,5 @@
+from celery import states
+from celery.worker.control import revoke
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -71,3 +73,21 @@ class Message(models.Model):
 
     def __str__(self):
         return f'{self.client}'
+
+
+class TaskMailing(models.Model):
+    """Model task mailing"""
+    task_id = models.CharField(max_length=128, verbose_name='task_id')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='task_client', verbose_name='client')
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, related_name='task_mailing', verbose_name='mailing')
+
+    class Meta:
+        verbose_name = 'task mailing'
+        verbose_name_plural = 'tasks mailing'
+
+    def __str__(self):
+        return f'{self.task_id}'
+
+    def delete(self, using=None, keep_parents=False):
+        revoke(state=states.ALL_STATES, task_id=self.task_id, terminate=True)
+        return super().delete(using, keep_parents)

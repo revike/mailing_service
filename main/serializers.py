@@ -22,10 +22,12 @@ class MailingSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         data = self.context['request'].data
-        start = datetime_str_to_datetime(data.get('start'))
-        stop = datetime_str_to_datetime(data.get('stop'))
-        if stop <= start:
-            raise ValidationError({'message': 'stop < start'})
+        start, stop = data.get('start'), data.get('stop')
+        if start and stop:
+            start = datetime_str_to_datetime(start)
+            stop = datetime_str_to_datetime(stop)
+            if stop <= start:
+                raise ValidationError({'message': 'stop < start'})
         super().save(**kwargs)
 
 

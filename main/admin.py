@@ -3,7 +3,7 @@ from django.contrib import admin
 from client.models import Client
 from config.settings import REST_FRAMEWORK
 from main.filters import date_range_filter_builder
-from main.models import Mailing, Message
+from main.models import Mailing, Message, TaskMailing
 from main.services import start_mailing
 
 
@@ -31,6 +31,16 @@ class MailingAdmin(admin.ModelAdmin):
 
     def response_add(self, request, obj, post_url_continue=None):
         create_obj = super().response_add(request, obj, post_url_continue)
+        self.run_mailing(obj)
+        return create_obj
+
+    def response_change(self, request, obj):
+        change_obj = super().response_change(request, obj)
+        self.run_mailing(obj, update=True)
+        return change_obj
+
+    @staticmethod
+    def run_mailing(obj, update=False):
         start = obj.start.strftime(REST_FRAMEWORK['DATETIME_FORMAT'])
         stop = obj.stop.strftime(REST_FRAMEWORK['DATETIME_FORMAT'])
         mobile_codes = obj.mobile_codes.all().values_list('code_mobile', flat=True)
@@ -38,8 +48,11 @@ class MailingAdmin(admin.ModelAdmin):
         clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
         if clients:
             mailing = {'id': obj.id, 'message': obj.message}
+            if update:
+                tasks_old = TaskMailing.objects.filter(
+                    client_id__in=clients.values_list('id', flat=True), mailing_id=mailing.get('id'))
+                tasks_old.delete()
             start_mailing(mailing, clients, start, stop)
-        return create_obj
 
 
 @admin.register(Message)
