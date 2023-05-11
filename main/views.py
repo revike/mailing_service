@@ -19,7 +19,7 @@ class MailingCreateApiView(generics.CreateAPIView):
         tags = mailing.get('tags')
         clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
         if clients:
-            start_mailing(clients, start, stop)
+            start_mailing(mailing, clients, start, stop)
 
 
 class MailingUpdateApiView(generics.UpdateAPIView):
