@@ -53,6 +53,7 @@ def run_mailing(serializer, update=False):
     mailing = serializer.data
     start = mailing.get('start')
     stop = mailing.get('stop')
+    is_active = mailing.get('is_active')
     mobile_codes = mailing.get('mobile_codes')
     tags = mailing.get('tags')
     clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
@@ -61,4 +62,5 @@ def run_mailing(serializer, update=False):
             tasks_old = TaskMailing.objects.filter(
                 client_id__in=clients.values_list('id', flat=True), mailing_id=mailing.get('id'))
             tasks_old.delete()
-        start_mailing(mailing, clients, start, stop)
+        if is_active:
+            start_mailing(mailing, clients, start, stop)

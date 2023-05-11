@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from client.models import Client
 from config.settings import REST_FRAMEWORK
@@ -45,14 +46,16 @@ class MailingAdmin(admin.ModelAdmin):
         stop = obj.stop.strftime(REST_FRAMEWORK['DATETIME_FORMAT'])
         mobile_codes = obj.mobile_codes.all().values_list('code_mobile', flat=True)
         tags = obj.tags.all().values_list('tag', flat=True)
-        clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
+        clients = Client.objects.filter(Q(tag__in=tags) | Q(mobile_code__in=mobile_codes)).distinct()
+        print(clients)
         if clients:
             mailing = {'id': obj.id, 'message': obj.message}
             if update:
                 tasks_old = TaskMailing.objects.filter(
                     client_id__in=clients.values_list('id', flat=True), mailing_id=mailing.get('id'))
                 tasks_old.delete()
-            start_mailing(mailing, clients, start, stop)
+            if obj.is_active:
+                start_mailing(mailing, clients, start, stop)
 
 
 @admin.register(Message)
