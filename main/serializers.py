@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -29,6 +30,23 @@ class MailingSerializer(serializers.ModelSerializer):
             if stop <= start:
                 raise ValidationError({'message': 'stop < start'})
         super().save(**kwargs)
+
+
+class StatisticSerializer(serializers.ModelSerializer):
+    """Serializer for statistics"""
+
+    class Meta:
+        model = Mailing
+        fields = ('id', 'message', 'is_active')
+
+    def to_representation(self, instance):
+        message_count = instance.msg_mailing.aggregate(
+            send=Count('mailing', filter=Q(send=True)),
+            not_send=Count('mailing', filter=Q(send=False))
+        )
+        representation = super().to_representation(instance)
+        representation['message_count'] = message_count
+        return representation
 
 
 class MobileCodeSerializer(serializers.ModelSerializer):
