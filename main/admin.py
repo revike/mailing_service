@@ -47,7 +47,6 @@ class MailingAdmin(admin.ModelAdmin):
         mobile_codes = obj.mobile_codes.all().values_list('code_mobile', flat=True)
         tags = obj.tags.all().values_list('tag', flat=True)
         clients = Client.objects.filter(Q(tag__in=tags) | Q(mobile_code__in=mobile_codes)).distinct()
-        print(clients)
         if clients:
             mailing = {'id': obj.id, 'message': obj.message}
             if update:
