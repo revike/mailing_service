@@ -1,6 +1,7 @@
 import datetime
 
 import pytz
+from django.db.models import Q
 
 from client.models import Client
 from config.settings import DATETIME_FORMAT, REST_FRAMEWORK, TIME_ZONE
@@ -56,7 +57,7 @@ def run_mailing(serializer, update=False):
     is_active = mailing.get('is_active')
     mobile_codes = mailing.get('mobile_codes')
     tags = mailing.get('tags')
-    clients = Client.objects.filter(tag__in=tags, mobile_code__in=mobile_codes)
+    clients = Client.objects.filter(Q(tag__in=tags) | Q(mobile_code__in=mobile_codes)).distinct()
     if clients:
         if update:
             tasks_old = TaskMailing.objects.filter(
