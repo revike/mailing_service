@@ -113,6 +113,14 @@ python3 -m venv venv
 chmod +x docker_commands.sh
 ```
 
+--------------------
+---
+Создаем файл .env (пример файла .env.sample)
+
+```
+touch .env
+```
+
 Запуск с помощью docker-compose
 -------------------------------
 ---
